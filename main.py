@@ -929,7 +929,15 @@ def calculate_image_lbp():
                             characteristics_image[i, j] < characteristics_image[i - 2, j - 2],
                             ]
             characteristics_calculated[i, j] = reduce(lambda a, b: 2*a+b, binary_value)
-
+    list_of_histograms = cv.calcHist(characteristics_calculated[0:15, 0:15].copy(), [0], None, [256], (0, 256))
+    for j in range(10, width, 10):
+        for i in range(0, height, 10):
+            region_of_interest = characteristics_calculated[i:i+15, j:j+15].copy()
+            cv.imshow("ROI", region_of_interest)
+            calculated_region_hist = cv.calcHist(region_of_interest, [0], None, [256], (0, 256))
+            np.append(list_of_histograms, calculated_region_hist)
+    array_of_histograms = np.asarray(list_of_histograms)
+    np.savetxt('test.txt', array_of_histograms, delimiter=',')
     cv.imshow("Old", characteristics_image)
     cv.imshow("New", characteristics_calculated)
 
